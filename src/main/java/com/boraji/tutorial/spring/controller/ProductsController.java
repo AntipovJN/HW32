@@ -108,6 +108,7 @@ public class ProductsController {
         System.out.println(user.getRole());
         try {
             if (!Objects.isNull(user.getId()) && user.getRole().equals("admin")) {
+                Product product = new Product(name, description, Double.valueOf(price));
                 productService.add(name, description, Double.valueOf(price));
             }
         } catch (IllegalArgumentException e) {

@@ -29,7 +29,7 @@ public class BasketController {
 
     @RequestMapping("/buy")
     public String addToBasket(@ModelAttribute("user") User user, @RequestParam("productID") String id) {
-        Optional<Product> optionalProduct = productService.getById(Long.valueOf(4L));
+        Optional<Product> optionalProduct = productService.getById(Long.valueOf(id));
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
             basketService.addProduct(user, product);

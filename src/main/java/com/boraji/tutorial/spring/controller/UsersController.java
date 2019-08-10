@@ -69,9 +69,7 @@ public class UsersController {
                            Model model) {
         if (user.getRole().equals("admin")) {
             try {
-                userService.updateUser(Long.valueOf(id), email,
-                        SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(password, salt)),
-                        SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(repeatPassword, salt)));
+                userService.updateUser(Long.valueOf(id), email, password, repeatPassword);
             } catch (LoginException e) {
                 model.addAttribute("error", e.getMessage());
                 return "edit_user";

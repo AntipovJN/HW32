@@ -50,6 +50,9 @@ public class AuthorisationController {
         try {
             Optional<User> optionalUser = userService.getByEmail(email);
             if (optionalUser.isPresent()) {
+                if(optionalUser.get().getPassword().equals(
+                        SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(
+                                password, optionalUser.get().getSalt()))))
                 user.setId(optionalUser.get().getId());
                 user.setEmail(optionalUser.get().getEmail());
                 user.setPassword(optionalUser.get().getPassword());
@@ -77,10 +80,7 @@ public class AuthorisationController {
                            @RequestParam String repeatPassword,
                            @RequestParam String role) {
         String salt = SaltGeneratorUtil.getSalt();
-        password = SHA256StringHashUtil.getSha256(
-                SaltGeneratorUtil.saltPassword(password, salt));
-        repeatPassword = SHA256StringHashUtil.getSha256(
-                SaltGeneratorUtil.saltPassword(repeatPassword, salt));
+
         try {
             userService.addUser(email, password, repeatPassword, role, salt);
             return "redirect:/login";

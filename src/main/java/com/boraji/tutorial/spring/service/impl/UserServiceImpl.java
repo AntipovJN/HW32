@@ -3,6 +3,8 @@ package com.boraji.tutorial.spring.service.impl;
 import com.boraji.tutorial.spring.dao.UserDao;
 import com.boraji.tutorial.spring.entity.User;
 import com.boraji.tutorial.spring.service.UserService;
+import com.boraji.tutorial.spring.utils.SHA256StringHashUtil;
+import com.boraji.tutorial.spring.utils.SaltGeneratorUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
         if ((getByEmail(email).isPresent())) {
             throw new LoginException("Try another login");
         }
+        password = SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(password, salt));
         userDao.addUser(new User(email, password, role, salt));
     }
 
@@ -50,6 +53,8 @@ public class UserServiceImpl implements UserService {
         }
         optionalUser = userDao.getById(id);
         if (optionalUser.isPresent()) {
+            newPassword = SHA256StringHashUtil.getSha256(
+                    SaltGeneratorUtil.saltPassword(newPassword, optionalUser.get().getSalt()));
             User user = optionalUser.get();
             user.setEmail(newEmail);
             user.setPassword(newPassword);
