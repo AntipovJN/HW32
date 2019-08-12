@@ -14,18 +14,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-@SessionAttributes("order")
 @RequestMapping("/order")
 public class OrderController {
 
@@ -41,11 +35,6 @@ public class OrderController {
         this.codeService = codeService;
         this.basketService = basketService;
         this.mailService = mailService;
-    }
-
-    @ModelAttribute
-    public Order getOrderId(Order order) {
-        return order;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
