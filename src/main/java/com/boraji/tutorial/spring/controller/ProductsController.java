@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(value = "/products")
 public class ProductsController {
 
     private final ProductService productService;
@@ -24,7 +23,7 @@ public class ProductsController {
         this.productService = productService;
     }
 
-    @RequestMapping(value = "/store")
+    @RequestMapping(value = "/user/store")
     public String storePageView(Model model, @AuthenticationPrincipal User user) {
         if (user.getRole().equals("ROLE_ADMIN")) {
             model.addAttribute("isAdmin", true);
@@ -33,13 +32,13 @@ public class ProductsController {
         return "products";
     }
 
-    @RequestMapping(value = "/remove", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/remove", method = RequestMethod.GET)
     public String removeProduct(@RequestParam("productID") String id) {
         productService.removeProduct(Long.valueOf(id));
-        return "redirect:/products/store";
+        return "redirect:/admin/store";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/edit", method = RequestMethod.GET)
     public String updateProduct(@RequestParam("productID") String id, Model model) {
         try {
             Optional<Product> optionalProduct = productService.getById(Long.valueOf(id));
@@ -52,12 +51,12 @@ public class ProductsController {
                 return "edit_product";
             }
         } catch (NumberFormatException e) {
-            return "redirect:/products/store";
+            return "redirect:/admin/store";
         }
-        return "redirect:/products/store";
+        return "redirect:/admin/store";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/edit", method = RequestMethod.POST)
     public String editProduct(@RequestParam("productID") String id,
                               @RequestParam String name,
                               @RequestParam String description,
@@ -67,17 +66,17 @@ public class ProductsController {
                 productService.updateProduct(Long.valueOf(id), name, description, Double.valueOf(price));
             }
         } catch (NumberFormatException e) {
-            return "redirect:/products/store";
+            return "redirect:/admin/store";
         }
-        return "redirect:/products/store";
+        return "redirect:/admin/store";
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/add", method = RequestMethod.GET)
     public String addProductView() {
         return "add_product";
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/add", method = RequestMethod.POST)
     public String addProduct(@RequestParam String name,
                              @RequestParam String description,
                              @RequestParam String price,
@@ -88,6 +87,6 @@ public class ProductsController {
             model.addAttribute("error", e.getMessage());
             return "add_product";
         }
-        return "redirect:/products/store";
+        return "redirect:/admin/store";
     }
 }

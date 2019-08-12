@@ -14,6 +14,7 @@ import javax.security.auth.login.LoginException;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/admin")
 public class UsersController {
 
     private final UserService userService;
@@ -32,7 +33,7 @@ public class UsersController {
     @RequestMapping(value = "/users/remove", method = RequestMethod.GET)
     public String removeUser(@RequestParam String id) {
             userService.removeUser(Long.valueOf(id));
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @RequestMapping(value = "/users/edit", method = RequestMethod.GET)
@@ -43,7 +44,7 @@ public class UsersController {
                 model.addAttribute("email", optionalUser.get().getEmail());
                 return "edit_user";
         }
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @RequestMapping(value = "/users/edit", method = RequestMethod.POST)
@@ -59,6 +60,6 @@ public class UsersController {
                 model.addAttribute("error", e.getMessage());
                 return "edit_user";
         }
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 }

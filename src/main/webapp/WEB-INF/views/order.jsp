@@ -13,7 +13,7 @@
 <body>
 <center>
     <table>
-        <form action="/order/add" method="post">
+        <form action="/user/order/add" method="post">
             <tr>
                 <td>Write delivery address</td>
                 <td><input type="text" name="address" value=""/></td>

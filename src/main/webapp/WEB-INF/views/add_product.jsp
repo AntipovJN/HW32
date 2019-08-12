@@ -8,7 +8,7 @@
     <h4>
         ${error}
     </h4>
-    <form action="/products/add" method="post">
+    <form action="/admin/add" method="post">
         Name <input name="name" type="text" value="${name}"/> <br>
         Description <input name="description" type="text" value="${description}"> <br>
         Price <input name="price" type="number"> <br>

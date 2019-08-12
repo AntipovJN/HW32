@@ -21,14 +21,14 @@
         <tr>
             <td>${user.email}</td>
             <td>${user.password}</td>
-            <td><a href="/users/edit?id=${user.id}">Edit </a></td>
-            <td><a href="/users/remove?id=${user.id}">Remove </a></td>
+            <td><a href="/admin/users/edit?id=${user.id}">Edit </a></td>
+            <td><a href="/admin/users/remove?id=${user.id}">Remove </a></td>
         </tr>
         </c:forEach>
         <a href="/register">
             <button>Register new user</button>
         </a>
-        <a href="/products/store">
+        <a href="/user/store">
             <button>All products</button>
         </a>
 </center>

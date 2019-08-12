@@ -8,7 +8,9 @@
     <a href="/signout">
         <button>End Session</button>
     </a>
-    <a href="/order/add"><button>Confirm order</button></a>
+    <c:if test="${isAdmin == null}">
+    <a href="/user/order/add"><button>Confirm order</button></a>
+    </c:if>
 <center>
     <h2> Список товаров </h2>
     <table border="1">
@@ -33,11 +35,11 @@
             <td>${product.price}</td>
             <c:choose>
                 <c:when test="${isAdmin==true}">
-                    <td><a href='/products/edit?productID=${product.id}'>Edit </a></td>
-                    <td><a href='/products/remove?productID=${product.id}'>Remove </a></td>
+                    <td><a href='/admin/edit?productID=${product.id}'>Edit </a></td>
+                    <td><a href='/admin/remove?productID=${product.id}'>Remove </a></td>
                 </c:when>
                 <c:otherwise>
-                    <td><a href="/products/buy?productID=${product.id}">
+                    <td><a href="/user/products/buy?productID=${product.id}">
                         <button>Buy</button>
                     </a></td>
                 </c:otherwise>

@@ -8,7 +8,7 @@
 Enter authentication code from email, for confirm order
 <br/>Sum of the order: ${sum}
 ${error}
-<form action="/order/confirm" method="post">
+<form action="/user/order/confirm" method="post">
     <input type="hidden" value="${orderId}" name="orderId"/>
     Code:<input type="text" name="codeValue"/>
     <input type="submit" value="confirm"/>

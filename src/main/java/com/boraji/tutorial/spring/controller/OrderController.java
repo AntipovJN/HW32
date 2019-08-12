@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/order")
+@RequestMapping("/user/order")
 public class OrderController {
 
     private final OrderService orderService;
@@ -41,7 +41,7 @@ public class OrderController {
     public String addOrderView(@AuthenticationPrincipal User user) {
         Optional<Basket> optionalBasket = basketService.getBasket(user);
         if (!optionalBasket.isPresent() || optionalBasket.get().getProducts().isEmpty()) {
-            return "redirect:/products/store";
+            return "redirect:/user/store";
         }
         return "order";
     }
@@ -59,10 +59,10 @@ public class OrderController {
             Optional<Order> optionalOrder = orderService.getByCode(optionalCode.get());
             if (optionalOrder.isPresent()) {
                 model.addAttribute("orderId", optionalOrder.get().getId());
-                return "redirect:/order/confirm";
+                return "redirect:/user/order/confirm";
             }
         }
-        return "redirect:/products/store";
+        return "redirect:/user/store";
     }
 
     @GetMapping("/confirm")
@@ -76,7 +76,7 @@ public class OrderController {
             mailService.sendMessage(order.getCode());
             return "confirmOrder";
         }
-        return "redirect:/products/store";
+        return "redirect:/user/store";
     }
 
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
@@ -90,11 +90,11 @@ public class OrderController {
                 Order order = optionalOrder.get();
                 if (order.getCode().getCodeValue() == Integer.valueOf(codeValue)) {
                     basketService.removeProducts(user);
-                    return "redirect:/products/store";
+                    return "redirect:/user/store";
                 }
                 throw new NumberFormatException();
             }
-            return "redirect:/products/store";
+            return "redirect:/user/store";
         } catch (NumberFormatException e) {
             model.addAttribute("error", "Invalid code");
             return "confirmOrder";

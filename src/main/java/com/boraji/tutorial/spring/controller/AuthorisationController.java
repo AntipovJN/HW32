@@ -37,9 +37,9 @@ public class AuthorisationController {
             return "index";
         } else {
             if (user.getRole().equals("ROLE_ADMIN")) {
-                return "redirect:/users";
+                return "redirect:/admin/users";
             } else {
-                return "redirect:/products/store";
+                return "redirect:/user/store";
             }
         }
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/products")
+@RequestMapping("/user/products")
 public class BasketController {
 
     private final BasketService basketService;
@@ -32,6 +32,6 @@ public class BasketController {
             Product product = optionalProduct.get();
             basketService.addProduct(user, product);
         }
-        return "redirect:/products/store";
+        return "redirect:/user/store";
     }
 }
