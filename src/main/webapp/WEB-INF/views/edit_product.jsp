@@ -9,7 +9,7 @@
         ${error}
     </h4>
     <form action="/products/edit" method="post">
-        <input type="hidden" name="id" value="${id}">
+        <input type="hidden" name="productID" value="${productID}">
         Name <input name="name" type="text" value="${name}"/> <br>
         Description <input name="description" type="text" value="${description}"> <br>
         Price <input name="price" type="number" value="${price}"> <br>

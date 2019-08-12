@@ -7,6 +7,7 @@ import com.boraji.tutorial.spring.utils.SHA256StringHashUtil;
 import com.boraji.tutorial.spring.utils.SaltGeneratorUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
@@ -19,24 +20,26 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private static final Logger log = Logger.getLogger(UserServiceImpl.class);
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final UserDao userDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Transactional
     @Override
-    public void addUser(String email, String password, String passwordAgain, String role, String salt)
+    public void addUser(String email, String password, String passwordAgain, String role)
             throws IllegalArgumentException, LoginException {
         validateUserData(email, password, passwordAgain);
         if ((getByEmail(email).isPresent())) {
             throw new LoginException("Try another login");
         }
-        password = SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(password, salt));
-        userDao.addUser(new User(email, password, role, salt));
+        password = bCryptPasswordEncoder.encode(password);
+        userDao.addUser(new User(email, password, role));
     }
 
     @Transactional
@@ -53,8 +56,7 @@ public class UserServiceImpl implements UserService {
         }
         optionalUser = userDao.getById(id);
         if (optionalUser.isPresent()) {
-            newPassword = SHA256StringHashUtil.getSha256(
-                    SaltGeneratorUtil.saltPassword(newPassword, optionalUser.get().getSalt()));
+            newPassword = bCryptPasswordEncoder.encode(newPassword);
             User user = optionalUser.get();
             user.setEmail(newEmail);
             user.setPassword(newPassword);

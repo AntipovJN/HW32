@@ -5,17 +5,15 @@ import com.boraji.tutorial.spring.entity.User;
 import com.boraji.tutorial.spring.service.BasketService;
 import com.boraji.tutorial.spring.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/products")
-@SessionAttributes("user")
 public class BasketController {
 
     private final BasketService basketService;
@@ -28,7 +26,7 @@ public class BasketController {
     }
 
     @RequestMapping("/buy")
-    public String addToBasket(@ModelAttribute("user") User user, @RequestParam("productID") String id) {
+    public String addToBasket(@AuthenticationPrincipal User user, @RequestParam("productID") String id) {
         Optional<Product> optionalProduct = productService.getById(Long.valueOf(id));
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
@@ -36,5 +34,4 @@ public class BasketController {
         }
         return "redirect:/products/store";
     }
-
 }

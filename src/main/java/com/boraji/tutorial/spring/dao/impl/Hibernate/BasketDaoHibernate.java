@@ -50,7 +50,7 @@ public class BasketDaoHibernate implements BasketDao {
         try {
             TypedQuery<Basket> query = sessionFactory.getCurrentSession().createQuery(
                     "FROM Basket WHERE user =:user ORDER BY id DESC ").setParameter("user", user);
-            return Optional.ofNullable(query.getSingleResult());
+            return Optional.ofNullable(query.setMaxResults(1).getSingleResult());
         } catch (Exception e) {
             logger.error(String.format("Failed get basket for user id ='%s'", user.getId()), e);
             return Optional.empty();

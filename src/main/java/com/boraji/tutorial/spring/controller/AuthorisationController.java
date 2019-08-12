@@ -1,22 +1,19 @@
 package com.boraji.tutorial.spring.controller;
 
-import java.util.Optional;
-
 import com.boraji.tutorial.spring.entity.User;
 import com.boraji.tutorial.spring.service.UserService;
-import com.boraji.tutorial.spring.utils.SHA256StringHashUtil;
-import com.boraji.tutorial.spring.utils.SaltGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.security.auth.login.LoginException;
+import java.util.Objects;
 
 /**
  * @author imssbora
@@ -37,33 +34,16 @@ public class AuthorisationController {
         return user;
     }
 
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-    public String loginView() throws LoginException {
-        return "index";
-    }
-
-    @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
-    public String login(@RequestParam String password,
-                        @RequestParam String email,
-                        @SessionAttribute("user") User user,
-                        Model model) throws LoginException {
-        try {
-            Optional<User> optionalUser = userService.getByEmail(email);
-            if (optionalUser.isPresent()) {
-                if(optionalUser.get().getPassword().equals(
-                        SHA256StringHashUtil.getSha256(SaltGeneratorUtil.saltPassword(
-                                password, optionalUser.get().getSalt()))))
-                user.setId(optionalUser.get().getId());
-                user.setEmail(optionalUser.get().getEmail());
-                user.setPassword(optionalUser.get().getPassword());
-                user.setRole(optionalUser.get().getRole());
-                user.setSalt(optionalUser.get().getSalt());
+    @RequestMapping("/login")
+    public String login(@AuthenticationPrincipal User user) {
+        if (Objects.isNull(user)) {
+            return "index";
+        } else {
+            if (user.getRole().equals("ROLE_ADMIN")) {
+                return "redirect:/users";
+            } else {
                 return "redirect:/products/store";
             }
-            throw new IllegalArgumentException();
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", "Invalid login or password");
-            return "index";
         }
     }
 
@@ -79,10 +59,8 @@ public class AuthorisationController {
                            @RequestParam String password,
                            @RequestParam String repeatPassword,
                            @RequestParam String role) {
-        String salt = SaltGeneratorUtil.getSalt();
-
         try {
-            userService.addUser(email, password, repeatPassword, role, salt);
+            userService.addUser(email, password, repeatPassword, role);
             return "redirect:/login";
         } catch (LoginException e) {
             model.addAttribute("error", e.getMessage());
@@ -92,11 +70,5 @@ public class AuthorisationController {
             model.addAttribute("error", e.getMessage());
             return "register";
         }
-    }
-
-    @RequestMapping(value = "/exit")
-    public String exit(@ModelAttribute("user") User user) {
-        user = new User();
-        return "redirect:/login";
     }
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    void addUser(String email, String password, String passwordAgain, String role, String salt)
+    void addUser(String email, String password, String passwordAgain, String role)
             throws LoginException;
 
     void updateUser(Long id, String email, String password, String passwordAgain)

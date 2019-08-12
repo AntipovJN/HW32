@@ -5,7 +5,7 @@
     <title>All users</title>
 </head>
 <body>
-<a href="/exit">
+<a href="/signout">
     <button>End Session</button>
 </a>
 <center>

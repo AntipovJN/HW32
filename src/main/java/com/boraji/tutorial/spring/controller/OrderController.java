@@ -9,6 +9,7 @@ import com.boraji.tutorial.spring.service.MailService;
 import com.boraji.tutorial.spring.service.OrderService;
 import com.boraji.tutorial.spring.utils.CodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-@SessionAttributes({"user", "order"})
+@SessionAttributes( "order")
 @RequestMapping("/order")
 public class OrderController {
 
@@ -47,21 +48,19 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String addOrderView(@ModelAttribute("user") User user) {
-        if (Objects.isNull(user.getId())) {
+    public String addOrderView(@AuthenticationPrincipal User user) {
+        if(basketService.getBasket(user).getProducts().isEmpty()){
             return "redirect:/products/store";
         }
         return "order";
     }
 
-
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addOrder(@SessionAttribute("user") User user,
-                           @ModelAttribute("order") Order order,
+    public String addOrder(@AuthenticationPrincipal User user,
+                           @SessionAttribute("order") Order order,
                            @RequestParam String address,
                            @RequestParam String payment,
                            Model model) {
-        if (!Objects.isNull(user.getId())) {
             codeService.addCode(new Code(CodeGenerator.generateCode(), user));
             Optional<Code> optionalCode = codeService.getLastCodeForUser(user);
             if (optionalCode.isPresent()) {
@@ -77,16 +76,13 @@ public class OrderController {
                     model.addAttribute("orderId", order);
                     return "redirect:/order/confirm";
                 }
-            }
         }
         return "redirect:/products/store";
     }
 
     @GetMapping("/confirm")
-    public String confirmOrderView(@SessionAttribute("user") User user,
-                                   @SessionAttribute("order") Order order,
-                                   Model model) {
-        if (!Objects.isNull(order) || !Objects.isNull(user.getId())) {
+    public String confirmOrderView(@SessionAttribute("order") Order order, Model model) {
+        if (!Objects.isNull(order)) {
             model.addAttribute("orderId", order.getId());
             model.addAttribute("sum", order.getSum());
             model.addAttribute("error", "");
@@ -97,11 +93,11 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
-    public String login(@SessionAttribute("user") User user,
+    public String login( @AuthenticationPrincipal User user,
                         @SessionAttribute("order") Order order,
                         Model model, @RequestParam("codeValue") String codeValue) {
         try {
-            if (!Objects.isNull(order) || !Objects.isNull(user.getId())) {
+            if (!Objects.isNull(order) ) {
                 if (order.getCode().getCodeValue() == Integer.valueOf(codeValue)) {
                     basketService.removeProducts(user);
                     return "redirect:/products/store";

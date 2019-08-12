@@ -5,7 +5,7 @@
     <title>All products</title>
 </head>
 <body>
-    <a href="/exit">
+    <a href="/signout">
         <button>End Session</button>
     </a>
     <a href="/order/add"><button>Confirm order</button></a>
