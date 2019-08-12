@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class BasketServiceImpl implements BasketService {
@@ -38,9 +39,7 @@ public class BasketServiceImpl implements BasketService {
 
     @Transactional
     @Override
-    public Basket getBasket(User user) {
-        return basketDao.getLastBasketForUser(user).get();
+    public Optional<Basket> getBasket(User user) {
+        return basketDao.getLastBasketForUser(user);
     }
-
-
 }

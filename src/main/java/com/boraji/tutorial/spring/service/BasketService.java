@@ -4,9 +4,11 @@ import com.boraji.tutorial.spring.entity.Basket;
 import com.boraji.tutorial.spring.entity.Product;
 import com.boraji.tutorial.spring.entity.User;
 
+import java.util.Optional;
+
 public interface BasketService {
 
-    Basket getBasket(User user);
+    Optional<Basket> getBasket(User user);
 
     void addProduct(User user, Product product);
 

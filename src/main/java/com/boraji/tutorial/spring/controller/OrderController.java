@@ -1,5 +1,6 @@
 package com.boraji.tutorial.spring.controller;
 
+import com.boraji.tutorial.spring.entity.Basket;
 import com.boraji.tutorial.spring.entity.Code;
 import com.boraji.tutorial.spring.entity.Order;
 import com.boraji.tutorial.spring.entity.User;
@@ -24,7 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Controller
-@SessionAttributes( "order")
+@SessionAttributes("order")
 @RequestMapping("/order")
 public class OrderController {
 
@@ -49,7 +50,8 @@ public class OrderController {
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addOrderView(@AuthenticationPrincipal User user) {
-        if(basketService.getBasket(user).getProducts().isEmpty()){
+        Optional<Basket> optionalBasket = basketService.getBasket(user);
+        if (!optionalBasket.isPresent() || optionalBasket.get().getProducts().isEmpty()) {
             return "redirect:/products/store";
         }
         return "order";
@@ -57,32 +59,28 @@ public class OrderController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addOrder(@AuthenticationPrincipal User user,
-                           @SessionAttribute("order") Order order,
                            @RequestParam String address,
                            @RequestParam String payment,
                            Model model) {
-            codeService.addCode(new Code(CodeGenerator.generateCode(), user));
-            Optional<Code> optionalCode = codeService.getLastCodeForUser(user);
-            if (optionalCode.isPresent()) {
-                orderService.addOrder(optionalCode.get(), address, payment,
-                        basketService.getBasket(user));
-                Optional<Order> optionalOrder = orderService.getByCode(optionalCode.get());
-                if (optionalOrder.isPresent()) {
-                    order.setId(optionalOrder.get().getId());
-                    order.setCode(optionalOrder.get().getCode());
-                    order.setAddress(optionalOrder.get().getAddress());
-                    order.setPayment(optionalOrder.get().getPayment());
-                    order.setBasket(optionalOrder.get().getBasket());
-                    model.addAttribute("orderId", order);
-                    return "redirect:/order/confirm";
-                }
+        codeService.addCode(new Code(CodeGenerator.generateCode(), user));
+        Optional<Code> optionalCode = codeService.getLastCodeForUser(user);
+        if (optionalCode.isPresent()) {
+            orderService.addOrder(optionalCode.get(), address, payment,
+                    basketService.getBasket(user).get());
+            Optional<Order> optionalOrder = orderService.getByCode(optionalCode.get());
+            if (optionalOrder.isPresent()) {
+                model.addAttribute("orderId", optionalOrder.get().getId());
+                return "redirect:/order/confirm";
+            }
         }
         return "redirect:/products/store";
     }
 
     @GetMapping("/confirm")
-    public String confirmOrderView(@SessionAttribute("order") Order order, Model model) {
-        if (!Objects.isNull(order)) {
+    public String confirmOrderView(@RequestParam String orderId, Model model) {
+        Optional<Order> optionalOrder = orderService.getById(Long.valueOf(orderId));
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
             model.addAttribute("orderId", order.getId());
             model.addAttribute("sum", order.getSum());
             model.addAttribute("error", "");
@@ -93,11 +91,14 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/confirm", method = RequestMethod.POST)
-    public String login( @AuthenticationPrincipal User user,
-                        @SessionAttribute("order") Order order,
-                        Model model, @RequestParam("codeValue") String codeValue) {
+    public String login(@AuthenticationPrincipal User user,
+                        @RequestParam String orderId,
+                        @RequestParam String codeValue,
+                        Model model) {
         try {
-            if (!Objects.isNull(order) ) {
+            Optional<Order> optionalOrder = orderService.getById(Long.valueOf(orderId));
+            if (optionalOrder.isPresent()) {
+                Order order = optionalOrder.get();
                 if (order.getCode().getCodeValue() == Integer.valueOf(codeValue)) {
                     basketService.removeProducts(user);
                     return "redirect:/products/store";

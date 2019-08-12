@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class ConnectionJDBC {
 
-    private static final Logger log = Logger.getLogger(ConnectionJDBC.class);
+    private static final Logger logger = Logger.getLogger(ConnectionJDBC.class);
 
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String LOGIN = "postgres";
@@ -21,9 +21,9 @@ public class ConnectionJDBC {
             Connection connection = DriverManager.getConnection(URL, LOGIN, PASSWORD);
             return connection;
         } catch (ClassNotFoundException e) {
-            log.error("JDBC Driver not found", e);
+            logger.error("JDBC Driver not found", e);
         } catch (SQLException e) {
-            log.error("Get connection to DB imposable at the moment", e);
+            logger.error("Get connection to DB imposable at the moment", e);
         }
         return null;
     }

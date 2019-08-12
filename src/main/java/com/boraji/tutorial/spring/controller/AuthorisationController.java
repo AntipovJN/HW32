@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import javax.security.auth.login.LoginException;
 import java.util.Objects;
 
-/**
- * @author imssbora
- */
 @Controller
 @SessionAttributes({"user"})
 public class AuthorisationController {

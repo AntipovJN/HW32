@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +29,9 @@ public class ProductDaoHibernate implements ProductDao {
     @SuppressWarnings("unchecked")
     public List<Product> getAll() {
         List<Product> products = new ArrayList<>();
-        try  {
+        try {
             products = sessionFactory.getCurrentSession().createQuery("FROM Product").list();
-                    } catch (HibernateException e) {
+        } catch (HibernateException e) {
             logger.error("Failed get list of products", e);
         }
         return products;
@@ -41,7 +42,7 @@ public class ProductDaoHibernate implements ProductDao {
         try {
             sessionFactory.getCurrentSession().save(item);
         } catch (HibernateException e) {
-                       logger.error(String.format("Failed adding product with name = '%s'", item.getName()), e);
+            logger.error(String.format("Failed adding product with name = '%s'", item.getName()), e);
         }
     }
 
@@ -58,23 +59,18 @@ public class ProductDaoHibernate implements ProductDao {
 
     @Override
     public void updateProduct(Product product) {
-
-        Transaction transaction = null;
-        try{
+        try {
             sessionFactory.getCurrentSession().update(product);
         } catch (HibernateException e) {
-
             logger.error(String.format("Failed update product with id = '%d'", product.getId()));
         }
     }
 
     @Override
     public void removeProduct(Product product) {
-                Transaction transaction = null;
-        try  {
+        try {
             sessionFactory.getCurrentSession().delete(product);
         } catch (HibernateException e) {
-
             logger.error(String.format("Failed delete product with id = '%d'", product.getId()));
         }
     }

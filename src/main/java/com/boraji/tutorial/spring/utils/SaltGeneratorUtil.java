@@ -17,12 +17,4 @@ public class SaltGeneratorUtil {
         int mid = salt.length() / 2;
         return salt.substring(0, mid) + password + salt.substring(mid);
     }
-
-//    public static void main(String[] args) {
-//        String salt = SaltGeneratorUtil.getSalt();
-//        String saltPass = saltPassword("aa", salt);
-//        System.out.println(salt);
-//        System.out.println(saltPass);
-//        System.out.println(SHA256StringHashUtil.getSha256(saltPass));
-//    }
 }
